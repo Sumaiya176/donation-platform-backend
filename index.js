@@ -1,16 +1,18 @@
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 const port = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+app.use(cors({ origin: ["http://localhost:5173"], credentials: true }));
 
 // MongoDB Connection URL
 // { useNewUrlParser: true, useUnifiedTopology: true } removed from client to prevent warnings
@@ -25,6 +27,8 @@ async function run() {
 
     const db = client.db("assignment");
     const collection = db.collection("users");
+    const donationCollection = db.collection("donationCol");
+    const donationWithDonarCollection = db.collection("donationWithDonar");
 
     // User Registration
     app.post("/api/v1/register", async (req, res) => {
@@ -72,6 +76,14 @@ async function run() {
         expiresIn: process.env.EXPIRES_IN,
       });
 
+      res.cookie("refreshToken", token, {
+        //secure: config.NODE_ENV === "production",
+        secure: true,
+        httpOnly: true,
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24 * 365,
+      });
+
       res.json({
         success: true,
         message: "Login successful",
@@ -81,6 +93,79 @@ async function run() {
 
     // ==============================================================
     // WRITE YOUR CODE HERE
+
+    // -----------------  add donation post   ------------------
+    app.post("/api/v1/add-donation-post", async (req, res) => {
+      const donationData = req.body;
+
+      const returnInfo = await donationCollection.insertOne(donationData);
+
+      res.status(201).json(returnInfo);
+    });
+
+    // ------------------  get all donations   -----------------------
+    app.get("/api/v1/all-donations", async (req, res) => {
+      const returnInfo = await donationCollection.find().toArray();
+
+      res.status(201).json(returnInfo);
+    });
+
+    // -----------------------  delete donations  ----------------------------
+    app.delete("/api/v1/delete-donation/:id", async (req, res) => {
+      const id = req.params.id;
+
+      const returnInfo = await donationCollection.deleteOne({
+        _id: new ObjectId(id),
+      });
+
+      res.status(201).json(returnInfo);
+    });
+
+    // -------------------  update donations  --------------------------
+    app.put("/api/v1/update-donation/:id", async (req, res) => {
+      const id = req.params.id;
+      const body = req.body;
+
+      const returnInfo = await donationCollection.updateOne(
+        { _id: new ObjectId(id) },
+        {
+          $set: {
+            title: body.title,
+            category: body.category,
+            amount: body.amount,
+            description: body.description,
+          },
+        }
+      );
+
+      res.status(201).json(returnInfo);
+    });
+
+    // -------------------  get single donation  --------------------------
+    app.get("/api/v1/donation/:id", async (req, res) => {
+      const id = req.params.id;
+
+      //console.log("id", id);
+
+      const result = await donationCollection.findOne({
+        _id: new ObjectId(id),
+      });
+      //console.log(id, result);
+
+      res.status(201).json(result);
+    });
+
+    // -----------------  add donation with user info  ------------------
+    app.post("/api/v1/add-donation", async (req, res) => {
+      const donationData = req.body;
+
+      const returnInfo = await donationWithDonarCollection.insertOne(
+        donationData
+      );
+
+      res.status(201).json(returnInfo);
+    });
+
     // ==============================================================
 
     // Start the server
