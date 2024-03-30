@@ -12,7 +12,14 @@ const port = process.env.PORT || 5000;
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: ["http://localhost:5173"], credentials: true }));
+app.use(
+  cors({
+    origin: [
+      "https://l2-b2-frontend-path-assignment-6-server-starter-pack-ruddy.vercel.app/api/v1",
+    ],
+    credentials: true,
+  })
+);
 
 // MongoDB Connection URL
 // { useNewUrlParser: true, useUnifiedTopology: true } removed from client to prevent warnings
