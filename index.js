@@ -20,6 +20,7 @@ app.use(
   cors({
     AccessControlAllowOrigin: "*",
     origin: [
+      "http://localhost:5173/",
       "https://660885dff4b89b39d7637a2a--strong-salamander-0301d9.netlify.app/",
     ],
     credentials: true,
