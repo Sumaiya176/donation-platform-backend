@@ -18,10 +18,12 @@ app.use((req, res, next) => {
 });
 app.use(
   cors({
+    AccessControlAllowOrigin: "*",
     origin: [
       "https://660885dff4b89b39d7637a2a--strong-salamander-0301d9.netlify.app/",
     ],
     credentials: true,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   })
 );
 
