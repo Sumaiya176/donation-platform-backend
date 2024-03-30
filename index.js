@@ -15,7 +15,7 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: [
-      "https://l2-b2-frontend-path-assignment-6-server-starter-pack-ruddy.vercel.app/api/v1",
+      "https://660885dff4b89b39d7637a2a--strong-salamander-0301d9.netlify.app/",
     ],
     credentials: true,
   })
