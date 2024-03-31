@@ -12,19 +12,12 @@ const port = process.env.PORT || 5000;
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  next();
-});
 app.use(
   cors({
-    AccessControlAllowOrigin: "*",
-    origin: [
-      "http://localhost:5173/",
-      "https://660885dff4b89b39d7637a2a--strong-salamander-0301d9.netlify.app/",
-    ],
+    origin: "https://strong-salamander-0301d9.netlify.app",
     credentials: true,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
