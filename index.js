@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "https://strong-salamander-0301d9.netlify.app",
+    origin: "http://localhost:5173",
     credentials: true,
     methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -36,6 +36,9 @@ async function run() {
     const collection = db.collection("users");
     const donationCollection = db.collection("donationCol");
     const donationWithDonarCollection = db.collection("donationWithDonar");
+    const testimonialCollection = db.collection("testimonial");
+    const communityCollection = db.collection("community");
+    const volunteerCollection = db.collection("volunteer");
 
     // User Registration
     app.post("/api/v1/register", async (req, res) => {
@@ -169,6 +172,54 @@ async function run() {
       const returnInfo = await donationWithDonarCollection.insertOne(
         donationData
       );
+
+      res.status(201).json(returnInfo);
+    });
+
+    // -----------------  add testimonial post   ------------------
+    app.post("/api/v1/create-testimonial", async (req, res) => {
+      const testimonial = req.body;
+
+      const returnInfo = await testimonialCollection.insertOne(testimonial);
+
+      res.status(201).json(returnInfo);
+    });
+
+    // ------------------  get all testimonial   -----------------------
+    app.get("/api/v1/all-testimonial", async (req, res) => {
+      const returnInfo = await testimonialCollection.find().toArray();
+
+      res.status(201).json(returnInfo);
+    });
+
+    // -----------------  add community comment   ------------------
+    app.post("/api/v1/create-community", async (req, res) => {
+      const community = req.body;
+
+      const returnInfo = await communityCollection.insertOne(community);
+
+      res.status(201).json(returnInfo);
+    });
+
+    // ------------------  get all community comment   -----------------------
+    app.get("/api/v1/all-community", async (req, res) => {
+      const returnInfo = await communityCollection.find().toArray();
+
+      res.status(201).json(returnInfo);
+    });
+
+    // -----------------  add volunteer   ------------------
+    app.post("/api/v1/create-volunteer", async (req, res) => {
+      const volunteer = req.body;
+
+      const returnInfo = await volunteerCollection.insertOne(volunteer);
+
+      res.status(201).json(returnInfo);
+    });
+
+    // ------------------  get all community comment   -----------------------
+    app.get("/api/v1/all-volunteer", async (req, res) => {
+      const returnInfo = await volunteerCollection.find().toArray();
 
       res.status(201).json(returnInfo);
     });
